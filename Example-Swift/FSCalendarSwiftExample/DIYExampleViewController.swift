@@ -29,26 +29,38 @@ class DIYExampleViewController: UIViewController, FSCalendarDataSource, FSCalend
         self.view = view
         
         let height: CGFloat = UIDevice.current.model.hasPrefix("iPad") ? 400 : 300
-        let calendar = FSCalendar(frame: CGRect(x: 0, y: self.navigationController!.navigationBar.frame.maxY, width: view.frame.size.width, height: height))
+        let calendar = FSCalendar(frame: CGRect(x: 10, y: 70, width: self.view.frame.size.width-20, height: 340))
         calendar.dataSource = self
         calendar.delegate = self
         calendar.allowsMultipleSelection = true
-        view.addSubview(calendar)
+        self.view.addSubview(calendar)
         self.calendar = calendar
         
         calendar.calendarHeaderView.backgroundColor = UIColor.lightGray.withAlphaComponent(0.1)
         calendar.calendarWeekdayView.backgroundColor = UIColor.lightGray.withAlphaComponent(0.1)
         calendar.appearance.eventSelectionColor = UIColor.white
+        calendar.appearance.titleSelectionColor = UIColor.gray
+        
         calendar.appearance.eventOffset = CGPoint(x: 0, y: -7)
         calendar.today = nil // Hide the today circle
         calendar.register(DIYCalendarCell.self, forCellReuseIdentifier: "cell")
-//        calendar.clipsToBounds = true // Remove top/bottom line
-        
+        //        calendar.clipsToBounds = true // Remove top/bottom line
+        calendar.pagingEnabled = false
         calendar.swipeToChooseGesture.isEnabled = true // Swipe-To-Choose
         
+        //Customization
+        calendar.backgroundColor = UIColor.white
+        calendar.appearance.headerTitleColor = UIColor.black
+        calendar.appearance.weekdayTextColor = UIColor.black
+        calendar.appearance.caseOptions = FSCalendarCaseOptions.weekdayUsesSingleUpperCase
+        calendar.appearance.todayColor = UIColor.red
+        calendar.appearance.titleSelectionColor = UIColor.black
+        calendar.appearance.subtitleDefaultColor = UIColor.clear
+        calendar.appearance.headerDateFormat = "MMM"
+        calendar.appearance.caseOptions = FSCalendarCaseOptions.headerUsesUpperCase
+        //        calendar.appearance.caseOptions = FSCalendarCaseOptions.weekdayUsesSingleUpperCase
         let scopeGesture = UIPanGestureRecognizer(target: calendar, action: #selector(calendar.handleScopeGesture(_:)));
         calendar.addGestureRecognizer(scopeGesture)
-        
         
         let label = UILabel(frame: CGRect(x: 0, y: calendar.frame.maxY + 10, width: self.view.frame.size.width, height: 50))
         label.textAlignment = .center
@@ -56,14 +68,9 @@ class DIYExampleViewController: UIViewController, FSCalendarDataSource, FSCalend
         self.view.addSubview(label)
         self.eventLabel = label
         
-        let attributedText = NSMutableAttributedString(string: "")
-        let attatchment = NSTextAttachment()
-        attatchment.image = UIImage(named: "icon_cat")!
-        attatchment.bounds = CGRect(x: 0, y: -3, width: attatchment.image!.size.width, height: attatchment.image!.size.height)
-        attributedText.append(NSAttributedString(attachment: attatchment))
-        attributedText.append(NSAttributedString(string: "  Hey Daily Event  "))
-        attributedText.append(NSAttributedString(attachment: attatchment))
-        self.eventLabel.attributedText = attributedText
+        calendar.calendarWeekdayView.isHidden = true
+        calendar.weekdayHeight = 0.0
+        calendar.placeholderType = .none
         
     }
     
@@ -112,8 +119,8 @@ class DIYExampleViewController: UIViewController, FSCalendarDataSource, FSCalend
     // MARK:- FSCalendarDelegate
     
     func calendar(_ calendar: FSCalendar, boundingRectWillChange bounds: CGRect, animated: Bool) {
-        self.calendar.frame.size.height = bounds.height
-        self.eventLabel.frame.origin.y = calendar.frame.maxY + 10
+//        self.calendar.frame.size.height = bounds.height
+//        self.eventLabel.frame.origin.y = calendar.frame.maxY + 10
     }
     
     func calendar(_ calendar: FSCalendar, shouldSelect date: Date, at monthPosition: FSCalendarMonthPosition)   -> Bool {
