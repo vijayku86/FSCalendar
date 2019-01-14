@@ -162,6 +162,7 @@
 			path = ../FSCalendar;
 			sourceTree = "<group>";
 		};
+			);
 		EE09549E1B97DDE0007F6964 = {
 			isa = PBXGroup;
 			children = (

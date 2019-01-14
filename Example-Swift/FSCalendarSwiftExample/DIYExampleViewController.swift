@@ -51,7 +51,7 @@ class DIYExampleViewController: UIViewController, FSCalendarDataSource, FSCalend
         //Customization
         calendar.backgroundColor = UIColor.white
         calendar.appearance.headerTitleColor = UIColor.black
-        calendar.appearance.weekdayTextColor = UIColor.black
+        calendar.appearance.weekdayTextColor = UIColor.clear
         calendar.appearance.caseOptions = FSCalendarCaseOptions.weekdayUsesSingleUpperCase
         calendar.appearance.todayColor = UIColor.red
         calendar.appearance.titleSelectionColor = UIColor.black
@@ -69,8 +69,11 @@ class DIYExampleViewController: UIViewController, FSCalendarDataSource, FSCalend
         self.eventLabel = label
         
         calendar.calendarWeekdayView.isHidden = true
-        calendar.weekdayHeight = 0.0
+        calendar.weekdayHeight = 30.0
         calendar.placeholderType = .none
+        calendar.appearance.titleFont = UIFont.systemFont(ofSize: 15)
+        
+        
         
     }
     
