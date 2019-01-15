@@ -115,7 +115,9 @@
     
     NSDateComponents *components = [[NSCalendar currentCalendar] components:NSCalendarUnitDay | NSCalendarUnitMonth | NSCalendarUnitYear fromDate:month];
     NSString* year = [NSString stringWithFormat:@"%ld",components.year];
-    self.yearLabel.text = year;
+    self.yearLabel.text = @"";//year;
+    
+    
 }
 
 @end

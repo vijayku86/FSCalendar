@@ -435,10 +435,15 @@ typedef NS_ENUM(NSUInteger, FSCalendarOrientation) {
     if (self.floatingMode) {
         if ([kind isEqualToString:UICollectionElementKindSectionHeader]) {
             FSCalendarStickyHeader *stickyHeader = [collectionView dequeueReusableSupplementaryViewOfKind:UICollectionElementKindSectionHeader withReuseIdentifier:@"header" forIndexPath:indexPath];
+//            NSLog(@"IndexPath = %ld, month = %@",(long)indexPath.section,[self.gregorian dateByAddingUnit:NSCalendarUnitMonth value:indexPath.section toDate:[self.gregorian fs_firstDayOfMonth:_minimumDate] options:0] );
             stickyHeader.calendar = self;
-            stickyHeader.month = [self.gregorian dateByAddingUnit:NSCalendarUnitMonth value:indexPath.section toDate:[self.gregorian fs_firstDayOfMonth:_minimumDate] options:0];
-            self.visibleSectionHeaders[indexPath] = stickyHeader;
-            [stickyHeader setNeedsLayout];
+            NSIndexPath* nextIndexPath = [NSIndexPath indexPathForRow:0 inSection:indexPath.section+1];
+            NSLog(@"Current %ld Next=%ld",indexPath.section,nextIndexPath.section);
+            if (indexPath.section < nextIndexPath.section ){
+                stickyHeader.month = [self.gregorian dateByAddingUnit:NSCalendarUnitMonth value:indexPath.section toDate:[self.gregorian fs_firstDayOfMonth:_minimumDate] options:0];
+                self.visibleSectionHeaders[indexPath] = stickyHeader;
+                [stickyHeader setNeedsLayout];
+            }
             return stickyHeader;
         }
     }
@@ -952,8 +957,8 @@ typedef NS_ENUM(NSUInteger, FSCalendarOrientation) {
     }
     return _scopeGesture;
 }
-
-- (UILongPressGestureRecognizer *)swipeToChooseGesture
+/*
+- (UILongPressGestureRecognizer *)swipeToChooseGesture1
 {
     if (!_swipeToChooseGesture) {
         UILongPressGestureRecognizer *pressGesture = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleSwipeToChoose:)];
@@ -967,6 +972,24 @@ typedef NS_ENUM(NSUInteger, FSCalendarOrientation) {
     }
     return _swipeToChooseGesture;
 }
+ */
+
+-(UIPanGestureRecognizer*)swipeToChooseGesture
+{
+    if (!_swipeToChooseGesture) {
+        UIPanGestureRecognizer *pressGesture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(handleSwipeToChoose:)];
+        pressGesture.minimumNumberOfTouches = 1;
+        pressGesture.maximumNumberOfTouches = 1;
+        pressGesture.delegate = self;
+        [self.daysContainer addGestureRecognizer:pressGesture];
+        [self.collectionView addGestureRecognizer:pressGesture];
+        [self.collectionView.panGestureRecognizer requireGestureRecognizerToFail:pressGesture];
+        _swipeToChooseGesture = pressGesture;
+    }
+    return _swipeToChooseGesture;
+}
+
+
 
 - (void)setDataSource:(id<FSCalendarDataSource>)dataSource
 {
@@ -1411,7 +1434,7 @@ typedef NS_ENUM(NSUInteger, FSCalendarOrientation) {
     [cell configureAppearance];
 }
 
-
+/*
 - (void)handleSwipeToChoose:(UILongPressGestureRecognizer *)pressGesture
 {
     switch (pressGesture.state) {
@@ -1441,6 +1464,39 @@ typedef NS_ENUM(NSUInteger, FSCalendarOrientation) {
             break;
     }
    
+}*/
+
+- (void)handleSwipeToChoose:(UIPanGestureRecognizer *)pressGesture
+{
+    switch (pressGesture.state) {
+        case UIGestureRecognizerStateBegan:
+        
+          
+        case UIGestureRecognizerStateChanged: {
+            NSIndexPath *indexPath = [self.collectionView indexPathForItemAtPoint:[pressGesture locationInView:self.collectionView]];
+            if (indexPath && ![indexPath isEqual:self.lastPressedIndexPath]) {
+                NSDate *date = [self.calculator dateForIndexPath:indexPath];
+                FSCalendarMonthPosition monthPosition = [self.calculator monthPositionForIndexPath:indexPath];
+                if (![self.selectedDates containsObject:date] && [self collectionView:self.collectionView shouldSelectItemAtIndexPath:indexPath]) {
+                    [self selectDate:date scrollToDate:YES atMonthPosition:monthPosition];
+                    [self collectionView:self.collectionView didSelectItemAtIndexPath:indexPath];
+                } else if (self.collectionView.allowsMultipleSelection && [self collectionView:self.collectionView shouldDeselectItemAtIndexPath:indexPath]) {
+                    [self deselectDate:date];
+                    [self collectionView:self.collectionView didDeselectItemAtIndexPath:indexPath];
+                }
+            }
+            self.lastPressedIndexPath = indexPath;
+            break;
+        }
+        case UIGestureRecognizerStateEnded:
+        case UIGestureRecognizerStateCancelled: {
+            self.lastPressedIndexPath = nil;
+            break;
+        }
+        default:
+            break;
+    }
+    
 }
 
 - (void)selectCounterpartDate:(NSDate *)date
