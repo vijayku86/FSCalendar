@@ -957,7 +957,7 @@ typedef NS_ENUM(NSUInteger, FSCalendarOrientation) {
     }
     return _scopeGesture;
 }
-/*
+
 - (UILongPressGestureRecognizer *)swipeToChooseGesture1
 {
     if (!_swipeToChooseGesture) {
@@ -972,22 +972,22 @@ typedef NS_ENUM(NSUInteger, FSCalendarOrientation) {
     }
     return _swipeToChooseGesture;
 }
- */
+ 
 
--(UIPanGestureRecognizer*)swipeToChooseGesture
-{
-    if (!_swipeToChooseGesture) {
-        UIPanGestureRecognizer *pressGesture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(handleSwipeToChoose:)];
-        pressGesture.minimumNumberOfTouches = 1;
-        pressGesture.maximumNumberOfTouches = 1;
-        pressGesture.delegate = self;
-        [self.daysContainer addGestureRecognizer:pressGesture];
-        [self.collectionView addGestureRecognizer:pressGesture];
-        [self.collectionView.panGestureRecognizer requireGestureRecognizerToFail:pressGesture];
-        _swipeToChooseGesture = pressGesture;
-    }
-    return _swipeToChooseGesture;
-}
+//-(UIPanGestureRecognizer*)swipeToChooseGesture
+//{
+//    if (!_swipeToChooseGesture) {
+//        UIPanGestureRecognizer *pressGesture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(handleSwipeToChoose:)];
+//        pressGesture.minimumNumberOfTouches = 1;
+//        pressGesture.maximumNumberOfTouches = 1;
+//        pressGesture.delegate = self;
+//        [self.daysContainer addGestureRecognizer:pressGesture];
+//        [self.collectionView addGestureRecognizer:pressGesture];
+//        [self.collectionView.panGestureRecognizer requireGestureRecognizerToFail:pressGesture];
+//        _swipeToChooseGesture = pressGesture;
+//    }
+//    return _swipeToChooseGesture;
+//}
 
 
 
@@ -1470,8 +1470,6 @@ typedef NS_ENUM(NSUInteger, FSCalendarOrientation) {
 {
     switch (pressGesture.state) {
         case UIGestureRecognizerStateBegan:
-        
-          
         case UIGestureRecognizerStateChanged: {
             NSIndexPath *indexPath = [self.collectionView indexPathForItemAtPoint:[pressGesture locationInView:self.collectionView]];
             if (indexPath && ![indexPath isEqual:self.lastPressedIndexPath]) {

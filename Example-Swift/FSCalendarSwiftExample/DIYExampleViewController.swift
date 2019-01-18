@@ -20,6 +20,13 @@ class DIYExampleViewController: UIViewController, FSCalendarDataSource, FSCalend
     fileprivate weak var calendar: FSCalendar!
     fileprivate weak var eventLabel: UILabel!
     
+    public var allowMultipleSelection: Bool = true
+    // first date in the range
+    private var departureDate: Date? = Date()
+    // last date in the range
+    private var returnDate: Date? = Date()
+    // MARK:- Life cycle
+    private var datesRange: [Date]?
     // MARK:- Life cycle
     
     override func loadView() {
@@ -69,7 +76,7 @@ class DIYExampleViewController: UIViewController, FSCalendarDataSource, FSCalend
         self.eventLabel = label
         
         calendar.calendarWeekdayView.isHidden = true
-        calendar.weekdayHeight = 30.0
+        calendar.weekdayHeight = 0.0
         calendar.placeholderType = .none
         calendar.appearance.titleFont = UIFont.systemFont(ofSize: 15)
         
@@ -85,16 +92,180 @@ class DIYExampleViewController: UIViewController, FSCalendarDataSource, FSCalend
         // self.calendar.scope = FSCalendarScopeWeek;
         
         let dates = [
-            self.gregorian.date(byAdding: .day, value: -1, to: Date()),
-            Date(),
-            self.gregorian.date(byAdding: .day, value: 1, to: Date())
+            self.gregorian.date(byAdding: .day, value: 1, to: Date()),
+            self.gregorian.date(byAdding: .day, value: 2, to: Date()),
+            self.gregorian.date(byAdding: .day, value: 3, to: Date())
         ]
         dates.forEach { (date) in
-            self.calendar.select(date, scrollToDate: false)
+            self.calendar.select(date, scrollToDate: true)
         }
         // For UITest
         self.calendar.accessibilityIdentifier = "calendar"
         
+    }
+    
+//    // MARK:- FSCalendarDataSource
+//
+//    func calendar(_ calendar: FSCalendar, cellFor date: Date, at position: FSCalendarMonthPosition) -> FSCalendarCell {
+//        let cell = calendar.dequeueReusableCell(withIdentifier: "cell", for: date, at: position)
+//        return cell
+//    }
+//
+//    func calendar(_ calendar: FSCalendar, willDisplay cell: FSCalendarCell, for date: Date, at position: FSCalendarMonthPosition) {
+//        self.configure(cell: cell, for: date, at: position)
+//    }
+//
+//    func calendar(_ calendar: FSCalendar, titleFor date: Date) -> String? {
+//        if self.gregorian.isDateInToday(date) {
+//            return "今"
+//        }
+//        return nil
+//    }
+//
+//    func calendar(_ calendar: FSCalendar, numberOfEventsFor date: Date) -> Int {
+//        return 2
+//    }
+//
+//    // MARK:- FSCalendarDelegate
+//
+//    func calendar(_ calendar: FSCalendar, boundingRectWillChange bounds: CGRect, animated: Bool) {
+////        self.calendar.frame.size.height = bounds.height
+////        self.eventLabel.frame.origin.y = calendar.frame.maxY + 10
+//    }
+//
+//    func calendar(_ calendar: FSCalendar, shouldSelect date: Date, at monthPosition: FSCalendarMonthPosition)   -> Bool {
+//        return monthPosition == .current
+//    }
+//
+//    func calendar(_ calendar: FSCalendar, shouldDeselect date: Date, at monthPosition: FSCalendarMonthPosition) -> Bool {
+//        return monthPosition == .current
+//    }
+//
+//    func calendar(_ calendar: FSCalendar, didSelect date: Date, at monthPosition: FSCalendarMonthPosition) {
+//        print("did select date \(self.formatter.string(from: date))")
+//        self.configureVisibleCells()
+//    }
+//
+//    func calendar(_ calendar: FSCalendar, didDeselect date: Date) {
+//        print("did deselect date \(self.formatter.string(from: date))")
+//        self.configureVisibleCells()
+//    }
+//
+//    func calendar(_ calendar: FSCalendar, appearance: FSCalendarAppearance, eventDefaultColorsFor date: Date) -> [UIColor]? {
+//        if self.gregorian.isDateInToday(date) {
+//            return [UIColor.orange]
+//        }
+//        return [appearance.eventDefaultColor]
+//    }
+//
+//    // MARK: - Private functions
+//
+//    private func configureVisibleCells() {
+//        calendar.visibleCells().forEach { (cell) in
+//            let date = calendar.date(for: cell)
+//            let position = calendar.monthPosition(for: cell)
+//            self.configure(cell: cell, for: date!, at: position)
+//        }
+//    }
+//
+//    private func configure(cell: FSCalendarCell, for date: Date, at position: FSCalendarMonthPosition) {
+//
+//        let diyCell = (cell as! DIYCalendarCell)
+//        // Custom today circle
+//        diyCell.circleImageView.isHidden = !self.gregorian.isDateInToday(date)
+//        // Configure selection layer
+//        if position == .current {
+//
+//            var selectionType = SelectionType.none
+//
+//            if calendar.selectedDates.contains(date) {
+//                let previousDate = self.gregorian.date(byAdding: .day, value: -1, to: date)!
+//                let nextDate = self.gregorian.date(byAdding: .day, value: 1, to: date)!
+//                if calendar.selectedDates.contains(date) {
+//                    if calendar.selectedDates.contains(previousDate) && calendar.selectedDates.contains(nextDate) {
+//                        selectionType = .middle
+//                    }
+//                    else if calendar.selectedDates.contains(previousDate) && calendar.selectedDates.contains(date) {
+//                        selectionType = .rightBorder
+//                    }
+//                    else if calendar.selectedDates.contains(nextDate) {
+//                        selectionType = .leftBorder
+//                    }
+//                    else {
+//                        selectionType = .single
+//                    }
+//                }
+//            }
+//            else {
+//                selectionType = .none
+//            }
+//            if selectionType == .none {
+//                diyCell.selectionLayer.isHidden = true
+//                return
+//            }
+//            diyCell.selectionLayer.isHidden = false
+//            diyCell.selectionType = selectionType
+//
+//        } else {
+//            diyCell.circleImageView.isHidden = true
+//            diyCell.selectionLayer.isHidden = true
+//        }
+//    }
+//
+//}
+
+    func greyedOutPreviousDateToDeparture(depatureDate: Date) {
+        self.calendar.reloadData()
+        //      self.calendar.selectedDate = departureDate
+    }
+    
+    
+    func futureDateForCalendar()-> Date {
+        
+        let monthsToAdd = 0
+        let daysToAdd = 365
+        let yearsToAdd = 0
+        let currentDate = Date()
+        var dateComponent = DateComponents()
+        dateComponent.month = monthsToAdd
+        dateComponent.day = daysToAdd
+        dateComponent.year = yearsToAdd
+        
+        let futureDate = Calendar.current.date(byAdding: dateComponent, to: currentDate)
+        print("future date= \(String(describing: futureDate))")
+        return futureDate!
+    }
+    
+    func minimumDate(for calendar: FSCalendar) -> Date {
+        let date = Date()
+        //        if allowMultipleSelection {
+        //            let selectedIndex = selectDateSegmentControl.selectedSegmentIndex
+        //            if selectedIndex == 1 {
+        //                if let selectedDate = departureDate {
+        //                    date = selectedDate
+        //                }
+        //            }
+        //        }
+        return date
+    }
+    
+    func maximumDate(for calendar: FSCalendar) -> Date {
+        return self.futureDateForCalendar()
+    }
+    
+    func compareDateWithTodaysDate(date: Date) -> Bool{
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd"
+        let strSelectedDate = dateFormatter.string(from: date)
+        let strCurrentDate = dateFormatter.string(from: Date())
+        
+        let selDate = dateFormatter.date(from: strSelectedDate)
+        let currDate = dateFormatter.date(from: strCurrentDate)
+        print("SelectedDate = \(date)")
+        if selDate?.compare(currDate!) == ComparisonResult.orderedSame {
+            return true
+        }
+        return false
     }
     
     // MARK:- FSCalendarDataSource
@@ -108,22 +279,15 @@ class DIYExampleViewController: UIViewController, FSCalendarDataSource, FSCalend
         self.configure(cell: cell, for: date, at: position)
     }
     
-    func calendar(_ calendar: FSCalendar, titleFor date: Date) -> String? {
-        if self.gregorian.isDateInToday(date) {
-            return "今"
-        }
-        return nil
-    }
-    
     func calendar(_ calendar: FSCalendar, numberOfEventsFor date: Date) -> Int {
-        return 2
+        return 0
     }
     
     // MARK:- FSCalendarDelegate
     
     func calendar(_ calendar: FSCalendar, boundingRectWillChange bounds: CGRect, animated: Bool) {
-//        self.calendar.frame.size.height = bounds.height
-//        self.eventLabel.frame.origin.y = calendar.frame.maxY + 10
+        self.calendar.frame.size.height = bounds.height
+        self.eventLabel.frame.origin.y = calendar.frame.maxY + 10
     }
     
     func calendar(_ calendar: FSCalendar, shouldSelect date: Date, at monthPosition: FSCalendarMonthPosition)   -> Bool {
@@ -135,13 +299,109 @@ class DIYExampleViewController: UIViewController, FSCalendarDataSource, FSCalend
     }
     
     func calendar(_ calendar: FSCalendar, didSelect date: Date, at monthPosition: FSCalendarMonthPosition) {
-        print("did select date \(self.formatter.string(from: date))")
-        self.configureVisibleCells()
+        // nothing selected:
+        if departureDate == nil || !allowMultipleSelection {
+            for d in calendar.selectedDates {
+                calendar.deselect(d)
+            }
+            departureDate = date
+            let range = datesRange(from: departureDate!, to: date)
+            for d in range {
+                calendar.select(d)
+            }
+            datesRange = range
+            print("datesRange contains: \(datesRange!)")
+            self.configureVisibleCells()
+            
+            return
+        }
+        
+        // only Departure date is selected:
+        if departureDate != nil && returnDate == nil {
+            // handle the case of if the last date is less than the first date:
+            if date < departureDate! {
+                calendar.deselect(departureDate!)
+                departureDate = date
+                datesRange = [departureDate!]
+                print("datesRange contains: \(datesRange!)")
+                self.configureVisibleCells()
+                return
+            }
+            let range = datesRange(from: departureDate!, to: date)
+            returnDate = range.last
+            for d in range {
+                calendar.select(d)
+            }
+            datesRange = range
+            self.configureVisibleCells()
+            
+            print("datesRange contains: \(datesRange!)")
+            return
+        }
+        
+        // both are selected:
+        if departureDate != nil && returnDate != nil {
+            for d in calendar.selectedDates {
+                calendar.deselect(d)
+            }
+            returnDate = nil
+            
+            departureDate = nil
+            departureDate = date
+            let range = datesRange(from: departureDate!, to: date)
+            for d in range {
+                calendar.select(d)
+            }
+            datesRange = range
+            self.configureVisibleCells()
+            
+            print("datesRange contains: \(datesRange!)")
+        }
+        
     }
     
-    func calendar(_ calendar: FSCalendar, didDeselect date: Date) {
-        print("did deselect date \(self.formatter.string(from: date))")
-        self.configureVisibleCells()
+    
+    
+    func datesRange(from: Date, to: Date) -> [Date] {
+        // in case of the "from" date is more than "to" date,
+        // it should returns an empty array:
+        if from > to { return [Date]() }
+        var tempDate = from
+        var array = [tempDate]
+        
+        while tempDate < to {
+            tempDate = Calendar.current.date(byAdding: .day, value: 1, to: tempDate)!
+            array.append(tempDate)
+        }
+        return array
+    }
+    
+    func calendar(_ calendar: FSCalendar, didDeselect date: Date, at monthPosition: FSCalendarMonthPosition) {
+        // both are selected:
+        // NOTE: the is a REDUANDENT CODE:
+        
+//        if allowMultipleSelection && returnDate == nil {
+//            let range = datesRange(from: departureDate!, to: date)
+//            returnDate = range.last
+//            for d in range {
+//                calendar.select(d)
+//            }
+//            datesRange = range
+//            self.configureVisibleCells()
+//
+//            print("datesRange contains: \(datesRange!)")
+//            return
+//        }
+//        if departureDate != nil && returnDate != nil {
+//            for d in calendar.selectedDates {
+//                calendar.deselect(d)
+//            }
+//            returnDate = nil
+//            departureDate = nil
+//            datesRange = []
+//            print("datesRange contains: \(datesRange!)")
+//        }
+        //self.configureVisibleCells()
     }
     
     func calendar(_ calendar: FSCalendar, appearance: FSCalendarAppearance, eventDefaultColorsFor date: Date) -> [UIColor]? {
@@ -149,6 +409,13 @@ class DIYExampleViewController: UIViewController, FSCalendarDataSource, FSCalend
             return [UIColor.orange]
         }
         return [appearance.eventDefaultColor]
+    }
+    
+    func calendar(_ calendar: FSCalendar, appearance: FSCalendarAppearance, borderSelectionColorFor date: Date) -> UIColor? {
+        if self.gregorian.isDateInToday(date) {
+            return UIColor.red
+        }
+        return appearance.borderSelectionColor
     }
     
     // MARK: - Private functions
@@ -165,28 +432,58 @@ class DIYExampleViewController: UIViewController, FSCalendarDataSource, FSCalend
         
         let diyCell = (cell as! DIYCalendarCell)
         // Custom today circle
-        diyCell.circleImageView.isHidden = !self.gregorian.isDateInToday(date)
+        diyCell.circleImageView?.isHidden = !self.gregorian.isDateInToday(date)
         // Configure selection layer
         if position == .current {
             
             var selectionType = SelectionType.none
             
             if calendar.selectedDates.contains(date) {
+                print("calendar.selectedDates = \(calendar.selectedDates)")
                 let previousDate = self.gregorian.date(byAdding: .day, value: -1, to: date)!
                 let nextDate = self.gregorian.date(byAdding: .day, value: 1, to: date)!
                 if calendar.selectedDates.contains(date) {
-                    if calendar.selectedDates.contains(previousDate) && calendar.selectedDates.contains(nextDate) {
-                        selectionType = .middle
+                    //self.compareDateWithTodaysDate(date: date)
+                    if allowMultipleSelection{
+                        if calendar.selectedDates.contains(previousDate) && calendar.selectedDates.contains(nextDate) {
+                            //middle date cell
+                            selectionType = .middle
+                        }
+                        else if calendar.selectedDates.contains(previousDate) && calendar.selectedDates.contains(date) {
+                            //right date cell
+                            selectionType = .rightBorder
+                        }
+                        else if calendar.selectedDates.contains(nextDate) && self.compareDateWithTodaysDate(date: date){
+                            //if today date is selected then only show date cell
+                            selectionType = .single
+                        }
+                        else if calendar.selectedDates.contains(nextDate){
+                            selectionType = .leftBorder
+                        }
+                        else if self.compareDateWithTodaysDate(date: date) {
+                            selectionType = .todayWithRightBorder
+                        }
+                        else if calendar.selectedDates.contains(date)  {
+                            selectionType = .singleMiddleBorder
+                        }
+                        else{
+                            selectionType = .single
+                        }
+                    }else{
+                        if calendar.selectedDates.contains(previousDate) && calendar.selectedDates.contains(nextDate) {
+                            selectionType = .middle
+                        }
+                        else if calendar.selectedDates.contains(previousDate) && calendar.selectedDates.contains(date) {
+                            selectionType = .rightBorder
+                        }
+                        else if calendar.selectedDates.contains(nextDate) {
+                            selectionType = .leftBorder
+                        }
+                        else{
+                            selectionType = .single
+                        }
                     }
-                    else if calendar.selectedDates.contains(previousDate) && calendar.selectedDates.contains(date) {
-                        selectionType = .rightBorder
-                    }
-                    else if calendar.selectedDates.contains(nextDate) {
-                        selectionType = .leftBorder
-                    }
-                    else {
-                        selectionType = .single
-                    }
+                    
                 }
             }
             else {
@@ -200,10 +497,8 @@ class DIYExampleViewController: UIViewController, FSCalendarDataSource, FSCalend
             diyCell.selectionType = selectionType
             
         } else {
-            diyCell.circleImageView.isHidden = true
+            diyCell.circleImageView?.isHidden = true
             diyCell.selectionLayer.isHidden = true
         }
-    }
-    
 }
-
+}

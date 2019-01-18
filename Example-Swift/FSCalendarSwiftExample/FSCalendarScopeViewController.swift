@@ -25,9 +25,10 @@ class FSCalendarScopeExampleViewController: UIViewController, UITableViewDataSou
         [unowned self] in
         let panGesture = UIPanGestureRecognizer(target: self.calendar, action: #selector(self.calendar.handleScopeGesture(_:)))
         panGesture.delegate = self
-        panGesture.minimumNumberOfTouches = 1
+        panGesture.minimumNumberOfTouches = 2
         panGesture.maximumNumberOfTouches = 2
         return panGesture
+        
     }()
     
     override func viewDidLoad() {

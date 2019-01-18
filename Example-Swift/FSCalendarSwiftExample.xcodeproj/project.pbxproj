@@ -57,7 +57,7 @@
 		305282C81E1608A100CC2877 /* FSCalendarScopeViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FSCalendarScopeViewController.swift; sourceTree = "<group>"; };
 		30D458E81DB4E2DB00B163C7 /* LoadViewExampleViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoadViewExampleViewController.swift; sourceTree = "<group>"; };
 		30F4C9191E07C3AD00D2EC4D /* FSCalendar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FSCalendar.h; sourceTree = "<group>"; };
-		30F4C91A1E07C3AD00D2EC4D /* FSCalendar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FSCalendar.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
+		30F4C91A1E07C3AD00D2EC4D /* FSCalendar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FSCalendar.m; sourceTree = "<group>"; };
 		30F4C91D1E07C3AD00D2EC4D /* FSCalendarAppearance.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FSCalendarAppearance.h; sourceTree = "<group>"; };
 		30F4C91E1E07C3AD00D2EC4D /* FSCalendarAppearance.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FSCalendarAppearance.m; sourceTree = "<group>"; };
 		30F4C91F1E07C3AD00D2EC4D /* FSCalendarCalculator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FSCalendarCalculator.h; sourceTree = "<group>"; };
@@ -162,7 +162,13 @@
 			path = ../FSCalendar;
 			sourceTree = "<group>";
 		};
+		B19D23B421EA3A7E00525B6C /* CustomCal */ = {
+			isa = PBXGroup;
+			children = (
 			);
+			name = CustomCal;
+			sourceTree = "<group>";
+		};
 		EE09549E1B97DDE0007F6964 = {
 			isa = PBXGroup;
 			children = (
@@ -185,6 +191,7 @@
 		EE0954A91B97DDE0007F6964 /* FSCalendarSwiftExample */ = {
 			isa = PBXGroup;
 			children = (
+				B19D23B421EA3A7E00525B6C /* CustomCal */,
 				EE0954AC1B97DDE0007F6964 /* AppDelegate.swift */,
 				303478381DB520C8007BBD2E /* TableViewController.swift */,
 				F95394791F26BF07005B83E5 /* LunarFormatter.swift */,
